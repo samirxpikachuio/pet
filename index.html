@@ -918,9 +918,9 @@
         updateRecentGallery();
         
         // Add JSZip for downloading multiple files
-        document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>');
+     
         
-        // Add cute animations
+        
         function addRandomPawPrints() {
             const container = document.querySelector('.container');
             const pawPrint = document.createElement('div');
@@ -953,7 +953,7 @@
             addRandomPawPrints();
         }
         
-        // Add a demo gif to the recent gallery if it's empty
+       
         if (recentCreations.length === 0) {
             fetch(API_URL + encodeURIComponent('https://i.postimg.cc/Ss9yQykp/exp.jpg'))
                 .then(response => {
@@ -970,6 +970,7 @@
                     console.error('Error fetching demo GIF:', error);
                 });
         }
+        document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>');
     </script>
 </body>
 </html>
