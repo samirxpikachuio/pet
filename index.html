@@ -3,280 +3,618 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anime Pet GIF Maker</title>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=M+PLUS+Rounded+1c&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+    <title>Anime Image Processor</title>
     <style>
-        body {
-            font-family: 'M PLUS Rounded 1c', sans-serif;
-            background-color: #ffe4e1;
-            color: #333;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            margin: 0;
-            position: relative;
+        :root {
+            --primary: #FF6B6B;
+            --secondary: #4ECDC4;
+            --accent: #FFD166;
+            --dark: #2A363B;
+            --light: #F7FFF7;
         }
-        body::before {
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--light);
+            color: var(--dark);
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ff6b6b' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: var(--dark);
+            color: var(--light);
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width='52' height='26' viewBox='0 0 52 26' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%234ecdc4' fill-opacity='0.15'%3E%3Cpath d='M10 10c0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6h2c0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4v2c-3.314 0-6-2.686-6-6 0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6zm25.464-1.95l8.486 8.486-1.414 1.414-8.486-8.486 1.414-1.414z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            z-index: 0;
+        }
+        
+        h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            z-index: 1;
+            position: relative;
+        }
+        
+        h1 span {
+            color: var(--primary);
+        }
+        
+        .tagline {
+            font-style: italic;
+            margin-top: 5px;
+            opacity: 0.8;
+            z-index: 1;
+            position: relative;
+        }
+        
+        .upload-section {
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            margin: 40px 0;
+            text-align: center;
+            border: 2px dashed var(--primary);
+            transition: all 0.3s ease;
+        }
+        
+        .upload-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+        
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            margin: 20px 0;
+        }
+        
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle, #ffd1d1 10%, transparent 10%) 0 0 / 20px 20px;
-            opacity: 0.5;
-            z-index: -1;
-        }
-        header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        header h1 {
-            margin: 0;
-            font-size: 3em;
-            color: #ff69b4;
-            font-family: 'Fredoka One', cursive;
-        }
-        header img {
-            width: 60px;
-            margin-left: 15px;
-        }
-        .anime-button {
-            background-color: #ff69b4;
-            color: #ffffff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 20px;
             cursor: pointer;
-            font-size: 1em;
-            transition: transform 0.2s, background-color 0.2s;
-            margin: 5px;
         }
-        .anime-button:hover {
-            transform: scale(1.1);
-            background-color: #ff9aa2;
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 6px rgba(255, 107, 107, 0.4);
         }
-        #image {
-            display: none;
+        
+        .btn:hover {
+            background-color: #ff5252;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(255, 107, 107, 0.5);
         }
-        #gif-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 10px;
+        
+        .btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(255, 107, 107, 0.5);
+        }
+        
+        .btn-secondary {
+            background-color: var(--secondary);
+            box-shadow: 0 4px 6px rgba(78, 205, 196, 0.4);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #3dbeb5;
+            box-shadow: 0 6px 8px rgba(78, 205, 196, 0.5);
+        }
+        
+        .btn-secondary:active {
+            box-shadow: 0 2px 4px rgba(78, 205, 196, 0.5);
+        }
+        
+        .file-name {
+            margin-top: 10px;
+            font-style: italic;
+            color: #666;
+        }
+        
+        .preview-image {
+            max-width: 300px;
+            max-height: 300px;
+            border-radius: 10px;
             margin-top: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
-        #gif-container img {
-            max-width: 100%;
-            border: 10px solid #ffffff;
-            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
-        }
-        #loading {
+        
+        .loading {
             display: none;
-            font-size: 1.2em;
-            color: #ff69b4;
-            margin-bottom: 20px;
-        }
-        #result {
-            display: none;
+            margin: 20px auto;
             text-align: center;
         }
-        #download-gifs {
+        
+        .loading img {
+            width: 50px;
+            height: 50px;
+        }
+        
+        .result-container {
+            display: none;
+            margin-top: 40px;
+            text-align: center;
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .result-gif {
+            max-width: 300px;
+            max-height: 300px;
+            margin: 20px auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transform: rotate(-3deg);
+            transition: transform 0.3s ease;
+        }
+        
+        .result-gif:hover {
+            transform: rotate(3deg) scale(1.05);
+        }
+        
+        .download-btn {
+            margin-top: 20px;
+        }
+        
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+        
+        .gallery-item {
+            background-color: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .gallery-item:nth-child(odd) {
+            transform: rotate(-2deg);
+        }
+        
+        .gallery-item:nth-child(even) {
+            transform: rotate(2deg);
+        }
+        
+        .gallery-item:hover {
+            transform: rotate(0) scale(1.05);
+            z-index: 2;
+        }
+        
+        .gallery-img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        
+        .error-message {
+            color: var(--primary);
+            background-color: rgba(255, 107, 107, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
             display: none;
         }
+        
         footer {
-            margin-top: 20px;
-            font-size: 0.8em;
-            color: #999;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            color: #666;
+            border-top: 1px solid #eee;
         }
-        .upload-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 20px;
+        
+        .kawaii-icon {
+            font-size: 1.2rem;
+            vertical-align: middle;
+            margin: 0 5px;
         }
-        #selected-files {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin-top: 10px;
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .upload-section {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .gallery {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
         }
-        .file-preview {
+
+        /* Anime-themed elements */
+        .kawaii-container {
             position: relative;
-            margin: 5px;
-            width: 100px;
-            height: 100px;
-            overflow: hidden;
-            border-radius: 10px;
-            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
         }
-        .file-preview img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .remove-file {
+
+        .kawaii-decoration {
             position: absolute;
-            top: 5px;
-            right: 5px;
-            background-color: #ff69b4;
-            color: #ffffff;
-            border: none;
+            font-size: 2.5rem;
+            opacity: 0.2;
+            z-index: 0;
+            color: var(--accent);
+        }
+
+        .kawaii-1 { top: 10%; left: 5%; animation: float 6s ease-in-out infinite; }
+        .kawaii-2 { top: 20%; right: 7%; animation: float 8s ease-in-out infinite; }
+        .kawaii-3 { bottom: 15%; left: 8%; animation: float 7s ease-in-out infinite; }
+        .kawaii-4 { bottom: 25%; right: 6%; animation: float 9s ease-in-out infinite; }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0); }
+            50% { transform: translateY(-15px) rotate(5deg); }
+            100% { transform: translateY(0) rotate(0); }
+        }
+
+        /* Loading animation */
+        .loading-spinner {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(78, 205, 196, 0.3);
             border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
+            border-top-color: var(--secondary);
+            animation: spin 1s ease-in-out infinite;
         }
-        #progress-bar {
-            width: 100%;
-            height: 20px;
-            background-color: #ffd1d1;
-            border-radius: 10px;
-            overflow: hidden;
-            margin-top: 20px;
-        }
-        #progress {
-            height: 100%;
-            background-color: #ff69b4;
-            transition: width 0.5s ease;
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>Anime Pet GIF Maker</h1>
+        <div class="container">
+            <h1>Anime <span>Image</span> Processor</h1>
+            <p class="tagline">Transform your images into anime-style GIFs!</p>
+        </div>
     </header>
-    <div class="upload-container">
-        <button class="anime-button" id="select-files">Select Files</button>
-        <input type="file" id="image" name="image" accept="image/*" multiple>
-        <div id="selected-files"></div>
-        <button class="anime-button" id="generate-gifs">Generate GIFs</button>
+    
+    <div class="container kawaii-container">
+        <div class="kawaii-decoration kawaii-1">★</div>
+        <div class="kawaii-decoration kawaii-2">✿</div>
+        <div class="kawaii-decoration kawaii-3">♬</div>
+        <div class="kawaii-decoration kawaii-4">♡</div>
+        
+        <div class="upload-section">
+            <h2>Upload Your Image</h2>
+            <p>Select an image to transform into an anime-style GIF</p>
+            
+            <div class="file-input-wrapper">
+                <input type="file" id="imageInput" accept="image/*">
+                <button class="btn">Choose File</button>
+            </div>
+            
+            <div id="fileName" class="file-name">No file selected</div>
+            
+            <div id="imagePreviewContainer" style="display: none;">
+                <img id="imagePreview" class="preview-image" src="" alt="Preview">
+                <div style="margin-top: 20px;">
+                    <button id="processBtn" class="btn btn-secondary">Process Image</button>
+                </div>
+            </div>
+            
+            <div id="errorMessage" class="error-message"></div>
+        </div>
+        
+        <div id="loadingContainer" class="loading">
+            <div class="loading-spinner"></div>
+            <p>Transforming your image... <span class="kawaii-icon">✨</span></p>
+        </div>
+        
+        <div id="resultContainer" class="result-container">
+            <h2>Your Anime GIF <span class="kawaii-icon">✨</span></h2>
+            <img id="resultGif" class="result-gif" src="" alt="Result GIF">
+            <div>
+                <a id="downloadBtn" class="btn download-btn" href="#" download="anime-gif.gif">Download GIF</a>
+            </div>
+        </div>
+        
+        <div id="gallery" class="gallery">
+            <!-- Gallery items will be added here dynamically -->
+        </div>
     </div>
-    <div id="loading">Generating GIFs...</div>
-    <div id="progress-bar" style="display: none;">
-        <div id="progress" style="width: 0%;"></div>
-    </div>
-    <div id="result">
-        <h2>Your Anime Pet GIFs</h2>
-        <div id="gif-container"></div>
-        <button class="anime-button" id="download-gifs">Download GIFs</button>
-    </div>
-    <footer>Powered by Pet API</footer>
-
-    <script>
-        const selectFilesButton = document.getElementById('select-files');
-        const imageInput = document.getElementById('image');
-        const selectedFilesDiv = document.getElementById('selected-files');
-        const generateGifsButton = document.getElementById('generate-gifs');
-        const downloadGifsButton = document.getElementById('download-gifs');
-        const loadingDiv = document.getElementById('loading');
-        const resultDiv = document.getElementById('result');
-        const gifContainer = document.getElementById('gif-container');
-        let generatedGifs = [];
-
-        selectFilesButton.addEventListener('click', () => {
-            imageInput.click();
-        });
-
-        imageInput.addEventListener('change', () => {
-            selectedFilesDiv.innerHTML = '';
-            const files = imageInput.files;
-            Array.from(files).forEach((file, index) => {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const filePreview = document.createElement('div');
-                    filePreview.classList.add('file-preview');
-                    filePreview.innerHTML = `
-                        <img src="${e.target.result}" alt="Selected file ${index}">
-                        <button class="remove-file" data-index="${index}">&times;</button>
-                    `;
-                    selectedFilesDiv.appendChild(filePreview);
-                };
-                reader.readAsDataURL(file);
-            });
-        });
-
-        selectedFilesDiv.addEventListener('click', (e) => {
-            if (e.target.classList.contains('remove-file')) {
-                const index = e.target.dataset.index;
-                const dt = new DataTransfer();
-                Array.from(imageInput.files).forEach((file, i) => {
-                    if (i != index) dt.items.add(file);
-                });
-                imageInput.files = dt.files;
-                e.target.parentElement.remove();
-            }
-        });
-
-        generateGifsButton.addEventListener('click', async () => {
-            const files = imageInput.files;
-            if (files.length === 0) {
-                alert('Please select at least one file');
+    
+    <footer>
+        <p>Made with <span class="kawaii-icon">❤</span> for anime lovers</p>
+    </footer>
+    
+ <script>
+        // DOM Elements
+        const imageInput = document.getElementById('imageInput');
+        const fileName = document.getElementById('fileName');
+        const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+        const imagePreview = document.getElementById('imagePreview');
+        const processBtn = document.getElementById('processBtn');
+        const loadingContainer = document.getElementById('loadingContainer');
+        const resultContainer = document.getElementById('resultContainer');
+        const resultGif = document.getElementById('resultGif');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const errorMessage = document.getElementById('errorMessage');
+        const gallery = document.getElementById('gallery');
+        
+        // Event Listeners
+        imageInput.addEventListener('change', handleImageSelection);
+        processBtn.addEventListener('click', processImage);
+        
+        // Store processed GIFs
+        const processedGifs = [];
+        
+        // Handle image selection
+        function handleImageSelection(event) {
+            const file = event.target.files[0];
+            
+            if (!file) {
                 return;
             }
-            loadingDiv.style.display = 'block';
-            resultDiv.style.display = 'none';
-            downloadGifsButton.style.display = 'none';
-            gifContainer.innerHTML = '';
-            generatedGifs = [];
-
-            const progressBar = document.getElementById('progress-bar');
-            const progress = document.getElementById('progress');
-            progressBar.style.display = 'block';
-            progress.style.width = '0%';
-
-            const promises = Array.from(files).map(async (file, index) => {
-                const formData = new FormData();
-                formData.append('image', file);
-                try {
-                    const response = await fetch('https://www.samirxpikachu.run.place/pet', {
-                        method: 'POST',
-                        body: formData
-                    });
-                    if (!response.ok) throw new Error('API request failed');
-                    const blob = await response.blob();
-                    const url = URL.createObjectURL(blob);
-                    generatedGifs.push(blob);
-                    const img = document.createElement('img');
-                    img.src = url;
-                    img.alt = `Generated GIF ${index}`;
-                    img.style.transform = index % 2 === 0 ? 'rotate(2deg)' : 'rotate(-2deg)';
-                    gifContainer.appendChild(img);
-                    progress.style.width = `${((index + 1) / files.length) * 100}%`;
-                } catch (error) {
-                    console.error(`Error processing file ${index}:`, error);
-                }
-            });
-
-            await Promise.all(promises);
-            loadingDiv.style.display = 'none';
-            progressBar.style.display = 'none';
-            if (generatedGifs.length > 0) {
-                resultDiv.style.display = 'block';
-                downloadGifsButton.style.display = 'block';
-            } else {
-                alert('No GIFs were generated');
+            
+            // Display file name
+            fileName.textContent = file.name;
+            
+            // Show preview
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                imagePreview.src = e.target.result;
+                imagePreviewContainer.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+            
+            // Hide previous results and errors
+            resultContainer.style.display = 'none';
+            errorMessage.style.display = 'none';
+        }
+        
+        // Process image with API
+        async function processImage() {
+            const file = imageInput.files[0];
+            
+            if (!file) {
+                showError('Please select an image first');
+                return;
             }
-        });
-
-        downloadGifsButton.addEventListener('click', async () => {
-            if (generatedGifs.length === 0) return;
-            const zip = new JSZip();
-            generatedGifs.forEach((blob, index) => {
-                zip.file(`pet_gif_${index}.gif`, blob);
+            
+            // Show loading indicator
+            loadingContainer.style.display = 'block';
+            
+            // Create FormData
+            const formData = new FormData();
+            formData.append('image', file);
+            
+            try {
+                // Call API
+                const response = await fetch('https://www.samirxpikachu.run.place/pet', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`API Error: ${response.status}`);
+                }
+                
+                // Get blob data
+                const gifBlob = await response.blob();
+                
+                // Create URL for the blob
+                const gifUrl = URL.createObjectURL(gifBlob);
+                
+                // Display the result
+                resultGif.src = gifUrl;
+                resultContainer.style.display = 'block';
+                
+                // Update download button
+                downloadBtn.href = gifUrl;
+                downloadBtn.download = `anime-${Date.now()}.gif`;
+                
+                // Add to gallery
+                addToGallery(gifUrl);
+                
+                // Store the processed GIF
+                processedGifs.push({
+                    url: gifUrl,
+                    timestamp: new Date(),
+                    originalName: file.name
+                });
+                
+            } catch (error) {
+                console.error('Error processing image:', error);
+                showError('Failed to process image. Please try again.');
+            } finally {
+                // Hide loading indicator
+                loadingContainer.style.display = 'none';
+            }
+        }
+        
+        // Show error message
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+        }
+        
+        // Add processed GIF to gallery
+        function addToGallery(gifUrl) {
+            const galleryItem = document.createElement('div');
+            galleryItem.className = 'gallery-item';
+            
+            const img = document.createElement('img');
+            img.src = gifUrl;
+            img.className = 'gallery-img';
+            img.alt = 'Processed GIF';
+            
+            const downloadLink = document.createElement('a');
+            downloadLink.href = gifUrl;
+            downloadLink.download = `anime-${Date.now()}.gif`;
+            downloadLink.className = 'btn btn-secondary';
+            downloadLink.style.fontSize = '0.8rem';
+            downloadLink.style.padding = '8px 16px';
+            downloadLink.textContent = 'Download';
+            
+            galleryItem.appendChild(img);
+            galleryItem.appendChild(downloadLink);
+            
+            gallery.prepend(galleryItem);
+        }
+        
+        // Add random rotation to gallery items for visual effect
+        function randomizeRotation() {
+            const galleryItems = document.querySelectorAll('.gallery-item');
+            galleryItems.forEach(item => {
+                const rotation = Math.random() * 6 - 3; // Random rotation between -3 and 3 degrees
+                item.style.transform = `rotate(${rotation}deg)`;
             });
-            const content = await zip.generateAsync({ type: 'blob' });
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(content);
-            a.download = 'pet_gifs.gif';
-            a.click();
-        });
+        }
+        
+        // Check if browser supports File API
+        function checkBrowserSupport() {
+            if (window.File && window.FileReader && window.FormData) {
+                return true;
+            } else {
+                showError('Your browser does not support the File API. Please use a modern browser.');
+                return false;
+            }
+        }
+        
+        // Add some sample gallery items for demonstration
+        function addSampleGalleryItems() {
+            // Create placeholders for demonstration purposes
+            const sampleRotations = [-3, 2, -2, 3, -1];
+            
+            for (let i = 1; i <= 5; i++) {
+                const galleryItem = document.createElement('div');
+                galleryItem.className = 'gallery-item';
+                galleryItem.style.transform = `rotate(${sampleRotations[i-1]}deg)`;
+                
+                const img = document.createElement('img');
+                img.src = `/api/placeholder/300/200`;
+                img.className = 'gallery-img';
+                img.alt = 'Sample GIF';
+                
+                const downloadLink = document.createElement('a');
+                downloadLink.href = '#';
+                downloadLink.className = 'btn btn-secondary';
+                downloadLink.style.fontSize = '0.8rem';
+                downloadLink.style.padding = '8px 16px';
+                downloadLink.textContent = 'Download';
+                downloadLink.onclick = (e) => {
+                    e.preventDefault();
+                    showError('This is a sample image. Process your own image to download!');
+                };
+                
+                galleryItem.appendChild(img);
+                galleryItem.appendChild(downloadLink);
+                
+                gallery.appendChild(galleryItem);
+            }
+        }
+        
+        // Add anime cursor effect
+        function addAnimeCursorEffect() {
+            const cursor = document.createElement('div');
+            cursor.style.position = 'fixed';
+            cursor.style.width = '20px';
+            cursor.style.height = '20px';
+            cursor.style.borderRadius = '50%';
+            cursor.style.backgroundColor = 'rgba(255, 107, 107, 0.5)';
+            cursor.style.pointerEvents = 'none';
+            cursor.style.zIndex = '9999';
+            cursor.style.transform = 'translate(-50%, -50%)';
+            cursor.style.transition = 'width 0.2s, height 0.2s, background-color 0.2s';
+            document.body.appendChild(cursor);
+            
+            document.addEventListener('mousemove', e => {
+                cursor.style.left = `${e.clientX}px`;
+                cursor.style.top = `${e.clientY}px`;
+            });
+            
+            document.addEventListener('mousedown', () => {
+                cursor.style.width = '15px';
+                cursor.style.height = '15px';
+                cursor.style.backgroundColor = 'rgba(78, 205, 196, 0.5)';
+            });
+            
+            document.addEventListener('mouseup', () => {
+                cursor.style.width = '20px';
+                cursor.style.height = '20px';
+                cursor.style.backgroundColor = 'rgba(255, 107, 107, 0.5)';
+            });
+            
+            document.querySelectorAll('button, a').forEach(el => {
+                el.addEventListener('mouseenter', () => {
+                    cursor.style.width = '30px';
+                    cursor.style.height = '30px';
+                    cursor.style.backgroundColor = 'rgba(255, 209, 102, 0.5)';
+                });
+                
+                el.addEventListener('mouseleave', () => {
+                    cursor.style.width = '20px';
+                    cursor.style.height = '20px';
+                    cursor.style.backgroundColor = 'rgba(255, 107, 107, 0.5)';
+                });
+            });
+        }
+        
+        // Initialize
+        function init() {
+            if (checkBrowserSupport()) {
+                addSampleGalleryItems();
+                // Uncomment below to enable anime cursor effect
+                // addAnimeCursorEffect();
+            }
+        }
+        
+        // Run initialization
+        window.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
