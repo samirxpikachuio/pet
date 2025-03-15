@@ -6,6 +6,7 @@
     <title>Pet GIF Maker</title>
     <style>
         /* CSS Reset and Base Styles */
+          /* CSS Reset and Base Styles */
         :root {
             --bg-primary: #ffffff;
             --bg-secondary: #f8f9fa;
@@ -57,6 +58,12 @@
             padding: 2rem 1rem;
             position: relative;
             z-index: 1;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         header {
@@ -70,6 +77,29 @@
             font-size: 2rem;
             font-weight: bold;
             color: var(--accent-primary);
+            position: relative;
+            animation: logoReveal 1.2s ease-out;
+        }
+
+        @keyframes logoReveal {
+            0% { opacity: 0; transform: translateX(-30px); }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; transform: translateX(0); }
+        }
+
+        .logo::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(to right, var(--accent-primary), var(--accent-secondary));
+            animation: underlineGrow 1.5s forwards 0.5s;
+        }
+
+        @keyframes underlineGrow {
+            to { width: 100%; }
         }
 
         @media (min-width: 768px) {
@@ -82,11 +112,23 @@
         .card {
             background-color: var(--bg-card);
             border-radius: 1rem;
-            box-shadow: 0 4px 12px var(--shadow-color);
+            box-shadow: 0 8px 24px var(--shadow-color);
             padding: 1.5rem;
             margin-bottom: 2rem;
             backdrop-filter: blur(10px);
             border: 1px solid var(--border-color);
+            animation: cardAppear 0.5s ease-out;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 28px var(--shadow-color);
+        }
+
+        @keyframes cardAppear {
+            from { opacity: 0; transform: scale(0.96); }
+            to { opacity: 1; transform: scale(1); }
         }
 
         /* Drop Zone */
@@ -96,35 +138,88 @@
             padding: 2rem;
             text-align: center;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.4s ease;
+            animation: pulse 2s infinite ease-in-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
         }
 
         .drop-zone:hover, .drop-zone.drag-over {
             border-color: var(--accent-primary);
             background-color: var(--bg-secondary);
+            animation: none;
+            transform: scale(1.02);
+        }
+
+        .drop-zone::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%);
+            opacity: 0;
+            transform: scale(0.5);
+            transition: transform 0.5s ease, opacity 0.5s ease;
+        }
+
+        .drop-zone:hover::before, .drop-zone.drag-over::before {
+            opacity: 1;
+            transform: scale(1);
         }
 
         .drop-zone-icon {
             font-size: 3rem;
             margin-bottom: 1rem;
             color: var(--accent-primary);
+            animation: bounceIcon 2s infinite ease-in-out;
+        }
+
+        @keyframes bounceIcon {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
 
         .drop-zone-text {
             font-size: 1.2rem;
             margin-bottom: 0.5rem;
             color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .drop-zone:hover .drop-zone-text {
+            transform: scale(1.05);
+            color: var(--accent-primary);
         }
 
         .drop-zone-subtext {
             font-size: 0.9rem;
             color: var(--text-secondary);
+            opacity: 0.8;
+            transition: all 0.3s ease;
+        }
+
+        .drop-zone:hover .drop-zone-subtext {
+            opacity: 1;
         }
 
         /* Preview Section */
         .preview-container {
             display: none;
             margin-top: 1rem;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .preview-header {
@@ -138,6 +233,23 @@
             font-size: 1.2rem;
             font-weight: 600;
             color: var(--text-primary);
+            position: relative;
+            padding-bottom: 5px;
+        }
+
+        .preview-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background: linear-gradient(to right, var(--accent-primary), var(--accent-secondary));
+            transition: width 0.3s ease;
+        }
+
+        .preview-title:hover::after {
+            width: 100%;
         }
 
         .preview-image-container {
@@ -146,12 +258,24 @@
             overflow: hidden;
             background-color: var(--bg-secondary);
             margin-bottom: 1rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .preview-image-container:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
         }
 
         .preview-image {
             width: 100%;
             height: auto;
             display: block;
+            transition: filter 0.3s ease;
+        }
+
+        .preview-image-container:hover .preview-image {
+            filter: brightness(1.05);
         }
 
         .preview-filename {
@@ -166,6 +290,12 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .preview-image-container:hover .preview-filename {
+            transform: translateY(0);
         }
 
         /* Loading Section */
@@ -173,6 +303,7 @@
             display: none;
             text-align: center;
             padding: 2rem 0;
+            animation: fadeIn 0.5s ease-out;
         }
 
         .loading-dots {
@@ -188,6 +319,7 @@
             border-radius: 50%;
             background: linear-gradient(to right, var(--accent-primary), var(--accent-secondary));
             animation: bounce 1.5s infinite ease-in-out;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
         }
 
         .loading-dot:nth-child(2) {
@@ -200,10 +332,10 @@
 
         @keyframes bounce {
             0%, 100% {
-                transform: translateY(0);
+                transform: translateY(0) scale(1);
             }
             50% {
-                transform: translateY(-10px);
+                transform: translateY(-15px) scale(1.2);
             }
         }
 
@@ -213,8 +345,10 @@
             margin: 1rem auto;
             background-color: var(--bg-secondary);
             border-radius: 1rem;
-            height: 0.5rem;
+            height: 0.8rem;
             overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
         }
 
         .progress-bar {
@@ -223,12 +357,41 @@
             background: linear-gradient(to right, var(--accent-primary), var(--accent-secondary));
             border-radius: 1rem;
             transition: width 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.2) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
         }
 
         /* Result Section */
         .result-container {
             display: none;
             margin-top: 1rem;
+            animation: slideInRight 0.5s ease-out;
+        }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
         }
 
         .result-image-container {
@@ -236,12 +399,49 @@
             overflow: hidden;
             background-color: var(--bg-secondary);
             margin-bottom: 1.5rem;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .result-image-container::before {
+            content: '✨';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--accent-primary);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            opacity: 0;
+            transform: scale(0);
+            transition: all 0.3s ease;
+        }
+
+        .result-image-container:hover::before {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .result-image-container:hover {
+            transform: translateY(-8px) scale(1.01);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
         }
 
         .result-image {
             width: 100%;
             height: auto;
             display: block;
+            transition: all 0.5s ease;
+        }
+
+        .result-image-container:hover .result-image {
+            filter: brightness(1.1) contrast(1.05);
         }
 
         /* Buttons */
@@ -253,170 +453,452 @@
             border-radius: 9999px;
             font-weight: 500;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s ease;
             border: none;
             outline: none;
             font-size: 1rem;
             gap: 0.5rem;
-        }
-
-        .btn-primary {
-            background: linear-gradient(to right, var(--accent-primary), var(--accent-secondary));
-            color: white;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
-        }
-
-        .btn-primary:active {
-            transform: translateY(0);
-        }
-
-        .btn-secondary {
-            background: linear-gradient(to right, #f59e0b, #ef4444);
-            color: white;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        }
-
-        .btn-secondary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
-        }
-
-        .btn-outline {
-            background-color: transparent;
-            border: 1px solid var(--border-color);
-            color: var(--text-primary);
-        }
-
-        .btn-outline:hover {
-            background-color: var(--bg-secondary);
-        }
-
-        .btn-icon {
-            padding: 0.5rem;
-            border-radius: 50%;
-            width: 2.5rem;
-            height: 2.5rem;
-        }
-
-        .btn-center {
-            display: block;
-            margin: 1.5rem auto;
-        }
-
-        /* Error Message */
-        .error-message {
-            display: none;
-            background-color: rgba(220, 53, 69, 0.1);
-            color: var(--error-color);
-            padding: 1rem;
-            border-radius: 0.5rem;
-            margin-top: 1rem;
-            border: 1px solid rgba(220, 53, 69, 0.3);
-        }
-
-        /* Theme Toggle */
-        .theme-toggle {
-            background-color: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 50%;
-            width: 2.5rem;
-            height: 2.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .theme-toggle:hover {
-            transform: scale(1.1);
-        }
-
-        .theme-toggle-icon {
-            font-size: 1.2rem;
-            transition: all 0.3s;
-        }
-
-        /* Footer */
-        footer {
-            text-align: center;
-            margin-top: 2rem;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-
-        /* Animated Background */
-        .animated-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
+            position: relative;
             overflow: hidden;
         }
 
-        .bubble {
-            position: absolute;
-            border-radius: 50%;
-            opacity: 0.2;
-            animation: float 15s infinite ease-in-out;
+        .btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+    transition: transform 0.5s ease, opacity 0.5s ease;
+}
+
+.btn:active::after {
+    transform: translate(-50%, -50%) scale(2);
+    opacity: 1;
+    transition: 0s;
+}
+
+.btn-primary {
+    background: linear-gradient(to right, var(--accent-primary), var(--accent-secondary));
+    color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    animation: buttonPulse 2s infinite ease-in-out;
+}
+
+@keyframes buttonPulse {
+    0% { box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); }
+    50% { box-shadow: 0 6px 15px rgba(var(--accent-primary-rgb, 232, 62, 140), 0.4); }
+    100% { box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); }
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 8px 20px rgba(var(--accent-primary-rgb, 232, 62, 140), 0.5);
+    animation: none;
+}
+
+.btn-primary:active {
+    transform: translateY(0) scale(0.98);
+}
+
+.btn-secondary {
+    background: linear-gradient(to right, #f59e0b, #ef4444);
+    color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    position: relative;
+}
+
+.btn-secondary:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
+}
+
+.btn-secondary:hover span {
+    animation: bounce 0.5s ease infinite alternate;
+}
+
+.btn-outline {
+    background-color: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    overflow: hidden;
+    z-index: 1;
+    transition: all 0.3s ease;
+}
+
+.btn-outline::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 100%;
+    background-color: var(--bg-secondary);
+    z-index: -1;
+    transition: all 0.3s ease;
+}
+
+.btn-outline:hover {
+    color: var(--accent-primary);
+    border-color: var(--accent-primary);
+}
+
+.btn-outline:hover::before {
+    width: 100%;
+}
+
+.btn-icon {
+    padding: 0.5rem;
+    border-radius: 50%;
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.btn-icon:hover {
+    transform: rotate(90deg);
+    background-color: rgba(var(--accent-secondary-rgb, 111, 66, 193), 0.1);
+}
+
+.btn-center {
+    display: block;
+    margin: 1.5rem auto;
+    position: relative;
+}
+
+/* Button special effects */
+#generateBtn, #downloadBtn {
+    position: relative;
+    overflow: hidden;
+}
+
+#generateBtn::before, #downloadBtn::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 70%);
+    opacity: 0;
+    transform: scale(0.5);
+    transition: transform 0.5s ease, opacity 0.5s ease;
+}
+
+#generateBtn:hover::before, #downloadBtn:hover::before {
+    opacity: 1;
+    transform: scale(1);
+}
+
+#createAnotherBtn {
+    transition: all 0.3s ease;
+}
+
+#createAnotherBtn:hover {
+    letter-spacing: 0.5px;
+}
+
+/* Error Message */
+.error-message {
+    display: none;
+    background-color: rgba(220, 53, 69, 0.1);
+    color: var(--error-color);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-top: 1rem;
+    border: 1px solid rgba(220, 53, 69, 0.3);
+    animation: shake 0.5s cubic-bezier(.36,.07,.19,.97);
+    transform: translate3d(0, 0, 0);
+}
+
+@keyframes shake {
+    10%, 90% { transform: translate3d(-1px, 0, 0); }
+    20%, 80% { transform: translate3d(2px, 0, 0); }
+    30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+    40%, 60% { transform: translate3d(4px, 0, 0); }
+}
+
+/* Theme Toggle */
+.theme-toggle {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.5s ease;
+    position: relative;
+    overflow: hidden;
+    animation: rotateFadeIn 1s ease-out;
+}
+
+@keyframes rotateFadeIn {
+    from { opacity: 0; transform: rotate(-180deg) scale(0.5); }
+    to { opacity: 1; transform: rotate(0) scale(1); }
+}
+
+.theme-toggle:hover {
+    transform: rotate(180deg) scale(1.1);
+    box-shadow: 0 0 10px var(--accent-primary);
+}
+
+.theme-toggle-icon {
+    font-size: 1.2rem;
+    transition: all 0.5s ease;
+}
+
+.dark-mode .theme-toggle {
+    box-shadow: 0 0 8px var(--accent-secondary);
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    margin-top: 2rem;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    opacity: 0.7;
+    transition: all 0.3s ease;
+    animation: fadeIn 1.5s ease-out 0.5s both;
+}
+
+footer:hover {
+    opacity: 1;
+    transform: scale(1.05);
+}
+
+/* Animated Background */
+.animated-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.bubble {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.1;
+    animation: float 15s infinite ease-in-out, colorShift 20s infinite alternate;
+    pointer-events: none;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0) translateX(0) rotate(0deg);
+    }
+    25% {
+        transform: translateY(-20px) translateX(10px) rotate(5deg);
+    }
+    50% {
+        transform: translateY(-35px) translateX(-15px) rotate(-5deg);
+    }
+    75% {
+        transform: translateY(-15px) translateX(15px) rotate(3deg);
+    }
+}
+
+@keyframes colorShift {
+    0% { background-color: var(--accent-primary); }
+    50% { background-color: var(--accent-secondary); }
+    100% { background-color: var(--accent-primary); }
+}
+
+/* Utility Classes */
+.hidden {
+    display: none !important;
+}
+
+.flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.mt-1 {
+    margin-top: 1rem;
+}
+
+/* Page Transitions */
+.page-transition {
+    animation: fadeTransition 0.5s ease;
+}
+
+@keyframes fadeTransition {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+/* Element Appear Animation for JavaScript */
+.element-appear {
+    animation: elementAppear 0.5s ease-out forwards;
+}
+
+@keyframes elementAppear {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.element-disappear {
+    animation: elementDisappear 0.3s ease-out forwards;
+}
+
+@keyframes elementDisappear {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(-20px); }
+}
+
+/* Loading Animation Extra Effects */
+.processing-animation {
+    position: relative;
+    margin: 20px auto;
+    width: 60px;
+    height: 60px;
+}
+
+.processing-circle {
+    position: absolute;
+    border: 3px solid transparent;
+    border-top-color: var(--accent-primary);
+    border-radius: 50%;
+    animation: processingCircle 1s linear infinite;
+}
+
+.processing-circle:nth-child(1) {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.processing-circle:nth-child(2) {
+    top: 5px;
+    left: 5px;
+    right: 5px;
+    bottom: 5px;
+    border-top-color: var(--accent-secondary);
+    animation-duration: 0.9s;
+}
+
+.processing-circle:nth-child(3) {
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    border-top-color: var(--success-color);
+    animation-duration: 0.8s;
+}
+
+@keyframes processingCircle {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Success Animation */
+.success-animation {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto;
+    position: relative;
+    display: none;
+}
+
+.success-circle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 3px solid var(--success-color);
+    animation: successCircle 0.5s ease-in forwards;
+    opacity: 0;
+}
+
+.success-check {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    width: 30px;
+    height: 15px;
+    border-bottom: 3px solid var(--success-color);
+    border-left: 3px solid var(--success-color);
+    transform-origin: center;
+    animation: successCheck 0.5s 0.3s ease-in forwards;
+}
+
+@keyframes successCircle {
+    from { transform: scale(0.1); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes successCheck {
+    from { opacity: 0; transform: translate(-50%, -50%) scale(0) rotate(-45deg); }
+    to { opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(-45deg); }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+
+    .card {
+        padding: 1rem;
+    }
+
+    .logo {
+        font-size: 1.8rem;
+    }
+
+    .btn {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.9rem;
+    }
+    
+    .drop-zone-icon {
+        font-size: 2.5rem;
+    }
+    
+    .drop-zone-text {
+        font-size: 1.1rem;
+    }
+    
+    @keyframes float {
+        0%, 100% {
+            transform: translateY(0) translateX(0);
         }
-
-        @keyframes float {
-            0%, 100% {
-                transform: translateY(0) translateX(0);
-            }
-            25% {
-                transform: translateY(-20px) translateX(10px);
-            }
-            50% {
-                transform: translateY(-35px) translateX(-15px);
-            }
-            75% {
-                transform: translateY(-15px) translateX(15px);
-            }
+        50% {
+            transform: translateY(-10px) translateX(-5px);
         }
+    }
+}
 
-        /* Utility Classes */
-        .hidden {
-            display: none !important;
-        }
+/* Animation for Dark Mode Toggle */
+.dark-mode-transition {
+    animation: darkModeTransition 0.5s ease;
+}
 
-        .flex-center {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+@keyframes darkModeTransition {
+    0% { filter: brightness(1); }
+    50% { filter: brightness(0.8); }
+    100% { filter: brightness(1); }
+}
 
-        .mt-1 {
-            margin-top: 1rem;
-        }
 
-        /* Responsive Adjustments */
-        @media (max-width: 768px) {
-            .container {
-                padding: 1rem;
-            }
 
-            .card {
-                padding: 1rem;
-            }
-
-            .logo {
-                font-size: 1.8rem;
-            }
-
-            .btn {
-                padding: 0.6rem 1.2rem;
-                font-size: 0.9rem;
-            }
-        }
+            
     </style>
 </head>
 <body>
@@ -745,6 +1227,352 @@
                 themeToggle.querySelector('.theme-toggle-icon').textContent = '☀️';
             }
         }
+
+
+      // Add these functions to the existing JavaScript
+
+// Enhance the UI with animation classes
+function enhanceUIWithAnimations() {
+    // Add processing animation
+    const processingAnimation = document.createElement('div');
+    processingAnimation.className = 'processing-animation';
+    processingAnimation.innerHTML = `
+        <div class="processing-circle"></div>
+        <div class="processing-circle"></div>
+        <div class="processing-circle"></div>
+    `;
+    loadingContainer.prepend(processingAnimation);
+    
+    // Add success animation
+    const successAnimation = document.createElement('div');
+    successAnimation.className = 'success-animation';
+    successAnimation.innerHTML = `
+        <div class="success-circle"></div>
+        <div class="success-check"></div>
+    `;
+    resultContainer.prepend(successAnimation);
+    
+    // Add transition classes to key elements
+    addElementTransitions();
+}
+
+// Add transition classes to elements
+function addElementTransitions() {
+    document.querySelectorAll('.card, .btn, .preview-image-container, .result-image-container').forEach(element => {
+        element.classList.add('page-transition');
+    });
+}
+
+// Animate elements when changing states
+function animateElementAppear(element) {
+    element.classList.add('element-appear');
+    setTimeout(() => {
+        element.classList.remove('element-appear');
+    }, 500);
+}
+
+function animateElementDisappear(element, callback) {
+    element.classList.add('element-disappear');
+    setTimeout(() => {
+        element.classList.remove('element-disappear');
+        if (callback) callback();
+    }, 300);
+}
+
+// Enhanced version of the existing functions
+function processFile(file) {
+    if (previewContainer.style.display === 'block') {
+        animateElementDisappear(previewContainer, () => {
+            resetState();
+            continueProcessFile(file);
+        });
+    } else {
+        resetState();
+        continueProcessFile(file);
+    }
+}
+
+function continueProcessFile(file) {
+    // Check if file is an image
+    if (!file.type.startsWith('image/')) {
+        showError('Please select an image file');
+        return;
+    }
+    
+    currentFile = file;
+    currentFileUrl = URL.createObjectURL(file);
+    
+    // Update preview
+    previewImage.src = currentFileUrl;
+    previewFilename.textContent = file.name;
+    
+    // Hide drop zone and show preview with animation
+    dropZone.style.display = 'none';
+    previewContainer.style.display = 'block';
+    animateElementAppear(previewContainer);
+}
+
+// Generate GIF (simulated) with enhanced animations
+function generateGif() {
+    if (!currentFile) return;
+    
+    // Hide preview with animation
+    animateElementDisappear(previewContainer, () => {
+        previewContainer.style.display = 'none';
+        loadingContainer.style.display = 'block';
+        animateElementAppear(loadingContainer);
+        errorMessage.style.display = 'none';
+        
+        // Reset progress
+        progressBar.style.width = '0%';
+        
+        // Simulate progress updates with smoother animation
+        let progress = 0;
+        progressInterval = setInterval(() => {
+            // Make progress more realistic with varying speeds
+            const increment = Math.random() * (progress < 30 ? 5 : progress < 60 ? 3 : progress < 80 ? 2 : 0.5);
+            progress += increment;
+            if (progress > 90) progress = 90;
+            progressBar.style.width = `${progress}%`;
+        }, 200);
+        
+        // Simulate API call with timeout
+        setTimeout(() => {
+            clearInterval(progressInterval);
+            
+            // 10% chance of error for demonstration
+            if (Math.random() < 0.1) {
+                showError('Failed to generate GIF. Please try again.');
+                animateElementDisappear(loadingContainer, () => {
+                    loadingContainer.style.display = 'none';
+                    previewContainer.style.display = 'block';
+                    animateElementAppear(previewContainer);
+                });
+                return;
+            }
+            
+            // Complete progress with smooth animation
+            const finalInterval = setInterval(() => {
+                const currentWidth = parseFloat(progressBar.style.width) || 0;
+                const newWidth = currentWidth + (100 - currentWidth) * 0.1;
+                progressBar.style.width = `${newWidth}%`;
+                
+                if (newWidth >= 99.5) {
+                    clearInterval(finalInterval);
+                    progressBar.style.width = '100%';
+                    
+                    // Show success animation
+                    const successAnimation = document.querySelector('.success-animation');
+                    if (successAnimation) {
+                        successAnimation.style.display = 'block';
+                    }
+                    
+                    // Simulate successful generation
+                    setTimeout(() => {
+                        // In a real app, we would use the actual generated GIF
+                        // For this demo, we'll just use the original image
+                        generatedGifUrl = currentFileUrl;
+                        resultImage.src = generatedGifUrl;
+                        
+                        // Hide loading and show result with animation
+                        animateElementDisappear(loadingContainer, () => {
+                            loadingContainer.style.display = 'none';
+                            resultContainer.style.display = 'block';
+                            animateElementAppear(resultContainer);
+                            
+                            // Hide success animation after showing results
+                            setTimeout(() => {
+                                if (successAnimation) {
+                                    successAnimation.style.display = 'none';
+                                }
+                            }, 500);
+                        });
+                    }, 800);
+                }
+            }, 50);
+        }, 3000); // Simulate 3 second processing time
+    });
+}
+
+// Enhanced reset state with animations
+function resetState() {
+    // Clear intervals
+    if (progressInterval) {
+        clearInterval(progressInterval);
+        progressInterval = null;
+    }
+    
+    // Revoke object URLs
+    if (currentFileUrl) {
+        URL.revokeObjectURL(currentFileUrl);
+    }
+    
+    // Reset state variables
+    currentFile = null;
+    currentFileUrl = null;
+    generatedGifUrl = null;
+    
+    // Reset UI
+    fileInput.value = '';
+    previewImage.src = '';
+    previewFilename.textContent = '';
+    resultImage.src = '';
+    errorMessage.style.display = 'none';
+    
+    // Reset UI visibility
+    const successAnimation = document.querySelector('.success-animation');
+    if (successAnimation) {
+        successAnimation.style.display = 'none';
+    }
+    
+    // Show drop zone with animation, hide other containers
+    if (previewContainer.style.display === 'block' || loadingContainer.style.display === 'block' || resultContainer.style.display === 'block') {
+        previewContainer.style.display = 'none';
+        loadingContainer.style.display = 'none';
+        resultContainer.style.display = 'none';
+        dropZone.style.display = 'block';
+        animateElementAppear(dropZone);
+    } else {
+        dropZone.style.display = 'block';
+    }
+}
+
+// Enhanced error message with animation
+function showError(message) {
+    errorMessage.textContent = message;
+    errorMessage.style.display = 'block';
+    animateElementAppear(errorMessage);
+    
+    // Auto-hide error after 5 seconds
+    setTimeout(() => {
+        if (errorMessage.style.display === 'block') {
+            animateElementDisappear(errorMessage, () => {
+                errorMessage.style.display = 'none';
+            });
+        }
+    }, 5000);
+}
+
+// Toggle theme with enhanced animation
+function toggleTheme() {
+    document.body.classList.add('dark-mode-transition');
+    const isDarkMode = document.body.classList.toggle('dark-mode');
+    themeToggle.querySelector('.theme-toggle-icon').textContent = isDarkMode ? '☀️' : '🌙';
+    localStorage.setItem('darkMode', isDarkMode ? 'enabled' : 'disabled');
+    
+    // Update bubble colors based on theme
+    updateBubbleColors(isDarkMode);
+    
+    // Remove transition class after animation completes
+    setTimeout(() => {
+        document.body.classList.remove('dark-mode-transition');
+    }, 500);
+}
+
+// Create animated background with more dynamic bubbles
+function createAnimatedBackground() {
+    const lightModeColors = ['#FFD1DC', '#FFC0CB', '#FFB6C1', '#FF69B4', '#FF9AA2'];
+    const darkModeColors = ['#9C6ADE', '#805AD5', '#6B46C1', '#553C9A', '#44337A'];
+    const isDarkMode = document.body.classList.contains('dark-mode');
+    const colors = isDarkMode ? darkModeColors : lightModeColors;
+    
+    for (let i = 0; i < 25; i++) {
+        const bubble = document.createElement('div');
+        bubble.classList.add('bubble');
+        
+        // Random properties
+        const size = Math.random() * 120 + 40;
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        
+        // Set bubble styles
+        bubble.style.width = `${size}px`;
+        bubble.style.height = `${size}px`;
+        bubble.style.backgroundColor = color;
+        bubble.style.left = `${Math.random() * 100}vw`;
+        bubble.style.top = `${Math.random() * 100}vh`;
+        bubble.style.animationDuration = `${Math.random() * 15 + 10}s`;
+        bubble.style.animationDelay = `${Math.random() * 5}s`;
+        
+        animatedBg.appendChild(bubble);
+    }
+}
+
+// Update bubble colors when theme changes
+function updateBubbleColors(isDarkMode) {
+    const lightModeColors = ['#FFD1DC', '#FFC0CB', '#FFB6C1', '#FF69B4', '#FF9AA2'];
+    const darkModeColors = ['#9C6ADE', '#805AD5', '#6B46C1', '#553C9A', '#44337A'];
+    const colors = isDarkMode ? darkModeColors : lightModeColors;
+    
+    document.querySelectorAll('.bubble').forEach(bubble => {
+        bubble.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+    });
+}
+
+// Download GIF with button animation
+function downloadGif() {
+    if (!generatedGifUrl || !currentFile) return;
+    
+    // Add download animation to button
+    const downloadBtn = document.getElementById('downloadBtn');
+    downloadBtn.classList.add('downloading');
+    
+    // Create a temporary link element
+    const a = document.createElement('a');
+    a.href = generatedGifUrl;
+    a.download = `${currentFile.name.split('.')[0] || 'pet'}_pet.gif`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    
+    // Remove download animation after a moment
+    setTimeout(() => {
+        downloadBtn.classList.remove('downloading');
+    }, 1000);
+}
+
+// Add confetti effect when GIF is generated
+function showConfetti() {
+    const confettiContainer = document.createElement('div');
+    confettiContainer.className = 'confetti-container';
+    document.body.appendChild(confettiContainer);
+    
+    const colors = ['#FFD1DC', '#FFC0CB', '#FFB6C1', '#FF69B4', '#FF9AA2', '#9C6ADE', '#805AD5'];
+    
+    for (let i = 0; i < 100; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.left = `${Math.random() * 100}vw`;
+        confetti.style.animationDelay = `${Math.random() * 5}s`;
+        confetti.style.animationDuration = `${Math.random() * 3 + 2}s`;
+        confettiContainer.appendChild(confetti);
+    }
+    
+    setTimeout(() => {
+        document.body.removeChild(confettiContainer);
+    }, 5000);
+}
+
+// Enhanced initialization
+function initApp() {
+    createAnimatedBackground();
+    setupEventListeners();
+    loadThemePreference();
+    enhanceUIWithAnimations();
+    
+    // Start with subtle entrance animation for main container
+    const container = document.querySelector('.container');
+    if (container) {
+        container.style.opacity = '0';
+        container.style.transform = 'translateY(20px)';
+        setTimeout(() => {
+            container.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+            container.style.opacity = '1';
+            container.style.transform = 'translateY(0)';
+        }, 200);
+    }
+}
+
 
         // Initialize the app when the DOM is loaded
         document.addEventListener('DOMContentLoaded', initApp);
